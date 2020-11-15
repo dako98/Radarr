@@ -93,6 +93,21 @@ namespace NzbDrone.Core.Test.MediaFiles.MediaInfo.MediaInfoFormatterTests
         }
 
         [Test]
+        public void should_format_8_channel_object_based_as_71_if_XLL()
+        {
+            var mediaInfoModel = new MediaInfoModel
+            {
+                AudioChannels = 8,
+                AudioAdditionalFeatures = "XLL X",
+                AudioChannelPositions = "Object Based",
+                AudioChannelPositionsText = "Object Based",
+                SchemaRevision = 3
+            };
+
+            MediaInfoFormatter.FormatAudioChannels(mediaInfoModel).Should().Be(7.1m);
+        }
+
+        [Test]
         public void should_ignore_culture_on_channel_summary()
         {
             Thread.CurrentThread.CurrentCulture = new CultureInfo("fr-FR");

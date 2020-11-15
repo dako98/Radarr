@@ -456,6 +456,7 @@ namespace NzbDrone.Core.MediaFiles.MediaInfo
         private static decimal? FormatAudioChannelsFromAudioChannelPositions(MediaInfoModel mediaInfo)
         {
             var audioChannelPositions = mediaInfo.AudioChannelPositions;
+            var additionalFeatures = mediaInfo.AudioAdditionalFeatures;
 
             if (audioChannelPositions.IsNullOrWhiteSpace())
             {
@@ -503,6 +504,12 @@ namespace NzbDrone.Core.MediaFiles.MediaInfo
                     }
 
                     return positions;
+                }
+
+                // Workaround https://github.com/MediaArea/MediaInfo/issues/299 for DTS-X Audio
+                if (audioChannelPositions == "Object Based" && additionalFeatures.ContainsIgnoreCase("XLL") && additionalFeatures.ContainsIgnoreCase("X"))
+                {
+                    return mediaInfo.AudioChannels - 1 + 0.1m;
                 }
             }
             catch (Exception ex)

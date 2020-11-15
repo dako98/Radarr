@@ -108,6 +108,7 @@ namespace NzbDrone.Core.MediaFiles.MediaInfo
                     int generalRuntime;
                     int streamCount;
                     int audioChannels;
+                    int audioChannelsOrig;
                     int videoBitDepth;
                     decimal videoFrameRate;
                     int videoMultiViewCount;
@@ -139,8 +140,18 @@ namespace NzbDrone.Core.MediaFiles.MediaInfo
                     string audioChannelsStr = mediaInfo.Get(StreamKind.Audio, 0, "Channel(s)").Split(new string[] { " /" }, StringSplitOptions.None)[0].Trim();
                     int.TryParse(audioChannelsStr, out audioChannels);
 
-                    var audioChannelPositions = mediaInfo.Get(StreamKind.Audio, 0, "ChannelPositions/String2");
+                    string audioChannelsStrOrig = mediaInfo.Get(StreamKind.Audio, 0, "Channel(s)_Original").Split(new string[] { " /" }, StringSplitOptions.None)[0].Trim();
+                    int.TryParse(audioChannelsStrOrig, out audioChannelsOrig);
+
                     var audioChannelPositionsText = mediaInfo.Get(StreamKind.Audio, 0, "ChannelPositions");
+                    var audioChannelPositions = mediaInfo.Get(StreamKind.Audio, 0, "ChannelPositions/String2");
+
+                    if (audioChannelsOrig != audioChannels && audioChannelsOrig > 0)
+                    {
+                        audioChannels = audioChannelsOrig;
+                        audioChannelPositionsText = mediaInfo.Get(StreamKind.Audio, 0, "ChannelPositions_Original");
+                        audioChannelPositions = null;
+                    }
 
                     string audioLanguages = mediaInfo.Get(StreamKind.General, 0, "Audio_Language_List");
 
